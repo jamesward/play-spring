@@ -1,19 +1,19 @@
-package play.api.inject.spring
+package com.jamesward.playspring
 
 import java.lang.annotation.Annotation
-import javax.inject.{Scope, Provider}
+import javax.inject.Provider
 
 import org.springframework.beans.TypeConverter
 import org.springframework.beans.factory.annotation.{AutowiredAnnotationBeanPostProcessor, QualifierAnnotationAutowireCandidateResolver}
-import org.springframework.beans.factory.{NoUniqueBeanDefinitionException, NoSuchBeanDefinitionException, FactoryBean}
-import org.springframework.beans.factory.config.{AutowireCapableBeanFactory, BeanDefinitionHolder, ConstructorArgumentValues, BeanDefinition}
+import org.springframework.beans.factory.config.{AutowireCapableBeanFactory, BeanDefinition, BeanDefinitionHolder, ConstructorArgumentValues}
 import org.springframework.beans.factory.support._
+import org.springframework.beans.factory.{FactoryBean, NoSuchBeanDefinitionException, NoUniqueBeanDefinitionException}
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.core.annotation.AnnotationUtils
-import play.api.inject._
-import play.api._
 import play.api.ApplicationLoader.Context
+import play.api._
+import play.api.inject._
 import play.core.WebCommands
 
 import scala.collection.JavaConverters._
@@ -33,7 +33,7 @@ class SpringApplicationLoader extends ApplicationLoader {
     // todo - abstract this logic out into something pluggable, with the default delegating to global
     val configuration = global.onLoadConfig(context.initialConfiguration, env.rootPath, env.classLoader, env.mode)
 
-    Logger.configure(env.rootPath, configuration, env.mode)
+    //Logger.configure(env.rootPath, configuration, env.mode)
 
     // Load modules and include some of the core bindings
     val modules = new Module {
@@ -47,14 +47,16 @@ class SpringApplicationLoader extends ApplicationLoader {
     ctx.getBean(classOf[Application])
   }
 
+  /*
   override def createInjector(environment: Environment, configuration: Configuration, modules: Seq[Any]): Option[Injector] = {
     Some(createApplicationContext(environment, configuration, modules).getBean(classOf[Injector]))
   }
+  */
 
   /**
    * Creates an application context for the given modules
    */
-  private[spring] def createApplicationContext(environment: Environment, configuration: Configuration, modules: Seq[Any]): ApplicationContext = {
+  private def createApplicationContext(environment: Environment, configuration: Configuration, modules: Seq[Any]): ApplicationContext = {
 
     // todo, use an xml or classpath scanning context or something not dumb
     val ctx = new GenericApplicationContext()
@@ -273,7 +275,7 @@ class BindingKeyFactoryBean[T](key: BindingKey[T], objectType: Class[_], factory
         val candidates = factory.getBeanNamesForType(key.clazz)
         val matches = candidates.toList
           .map(name => new BeanDefinitionHolder(factory.getBeanDefinition(name), name))
-          .filter( bdh => QualifierChecker.checkQualifier(bdh, qualifier, factory.getTypeConverter))
+          //.filter(bdh => QualifierChecker.checkQualifier(bdh, qualifier, factory.getTypeConverter))
           .map(_.getBeanName)
         getNameFromMatches(matches)
     }
@@ -306,6 +308,7 @@ object QualifierChecker extends QualifierAnnotationAutowireCandidateResolver {
   /**
    * Override to expose as public
    */
+  /*
   override def checkQualifier(bdHolder: BeanDefinitionHolder, annotation: Annotation, typeConverter: TypeConverter) = {
     bdHolder.getBeanDefinition match {
       case root: RootBeanDefinition => super.checkQualifier(bdHolder, annotation, typeConverter)
@@ -314,6 +317,7 @@ object QualifierChecker extends QualifierAnnotationAutowireCandidateResolver {
         super.checkQualifier(bdh, annotation, typeConverter)
     }
   }
+  */
 }
 
 /**
@@ -341,7 +345,7 @@ class SpringInjector(factory: DefaultListableBeanFactory) extends Injector {
           beanDef.setAutowireMode(AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT)
           factory.registerBeanDefinition(clazz.getName, beanDef)
 
-          Play.logger.debug("Attempting just in time bean registration for bean with class " + clazz)
+          Logger.debug("Attempting just in time bean registration for bean with class " + clazz)
 
           val bean = factory.getBean(clazz)
           // todo - this ensures fields get injected, see if there's a way that this can be done automatically

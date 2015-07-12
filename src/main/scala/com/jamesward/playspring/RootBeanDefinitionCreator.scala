@@ -1,6 +1,7 @@
-package org.springframework.beans.factory.support
+package com.jamesward.playspring
 
 import org.springframework.beans.factory.config.BeanDefinition
+import org.springframework.beans.factory.support.RootBeanDefinition
 
 /**
  * This class is a hack (defined in the spring package to access the package private constructor)
@@ -9,5 +10,6 @@ import org.springframework.beans.factory.config.BeanDefinition
  */
 object RootBeanDefinitionCreator {
 
-  def create(bd: BeanDefinition): RootBeanDefinition = new RootBeanDefinition(bd)
+  def create(bd: RootBeanDefinition): RootBeanDefinition = new RootBeanDefinition(bd)
+
 }

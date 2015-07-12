@@ -1,19 +1,16 @@
-def commonSettings: Seq[Setting[_]] = Seq(
-  version := "1.0-SNAPSHOT",
-  organization := "com.typesafe.play",
-  scalaVersion := "2.10.4",
-  crossScalaVersions := Seq("2.10.4", "2.11.2")
+name := "play-spring"
+
+version := "0.0.1-SNAPSHOT"
+
+organization := "com.jamesward"
+
+scalaVersion := "2.10.5"
+
+crossScalaVersions := Seq("2.10.5", "2.11.7")
+
+libraryDependencies ++= Seq(
+  "com.typesafe.play" %% "play" % "2.4.1",
+  "org.springframework" % "spring-context" % "4.1.6.RELEASE",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+  "com.typesafe.play" %% "play-netty-server" % "2.4.1" % "test"
 )
-
-lazy val root = (project in file("."))
-  .aggregate(playSpring)
-
-lazy val playSpring = (project in file("core"))
-  .settings(commonSettings: _*)
-  .settings(
-    name := "play-spring",
-    libraryDependencies ++= Seq(
-      "com.typesafe.play" %% "play" % "2.4-SNAPSHOT",
-      "org.springframework" % "spring-context" % "4.0.6.RELEASE"
-    )
-  )

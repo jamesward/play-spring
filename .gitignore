@@ -1,2 +1,5 @@
-target
-project/project
+/target/
+/project/project/
+/project/target/
+/core/target
+/.idea/
